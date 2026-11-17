@@ -19,4 +19,6 @@ RUN uv sync --locked --no-dev --no-install-project --no-cache
 
 COPY . .
 
-CMD ["sh", "-c", "python readysetai/manage.py migrate && gunicorn --bind 0.0.0.0:${PORT:-8000} readysetai.wsgi:application"]
+RUN chmod +x entrypoint.sh
+
+ENTRYPOINT ["sh", "/app/entrypoint.sh"]
