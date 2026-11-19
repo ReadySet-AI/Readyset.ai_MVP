@@ -1,6 +1,17 @@
+from enum import Enum
+
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.core.validators import validate_email
 from django.db import models
+
+from addons.mixins import TimeStampMixin
+
+
+class Roles(Enum):
+    Global_Admin = "Global Admin"
+    Company_Admin = "Company Admin"
+    Mentor = "Mentor"
+    Newcomer = "Newcomer"
 
 
 class CustomUserManager(BaseUserManager):
@@ -35,8 +46,16 @@ class CustomUserManager(BaseUserManager):
         return self._create_user(email, password, **extra_fields)
 
 
-class CustomUser(AbstractUser):
+class CustomUser(TimeStampMixin, AbstractUser):
     email = models.EmailField(unique=True, validators=[validate_email])
+    department = models.CharField(max_length=220, null=True, blank=True)
+    role = models.CharField(
+        max_length=20,
+        choices=[(role.name, role.value) for role in Roles],
+        null=False,
+        blank=False,
+        default=None,
+    )
     is_active = models.BooleanField(default=False)
 
     objects = CustomUserManager()

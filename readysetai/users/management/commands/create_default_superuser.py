@@ -3,7 +3,7 @@ import typing as t
 from django.core.management.base import BaseCommand
 
 from readysetai.settings import SUPER_LOGIN, SUPER_PASSWORD
-from users.models import CustomUser
+from users.models import CustomUser, Roles
 
 
 class Command(BaseCommand):
@@ -12,7 +12,12 @@ class Command(BaseCommand):
     def handle(self, *args: t.Any, **options: t.Any) -> None:
         if not CustomUser.objects.filter(is_superuser=True).exists():
             CustomUser.objects.create_superuser(
-                email=SUPER_LOGIN, password=SUPER_PASSWORD
+                email=SUPER_LOGIN,
+                password=SUPER_PASSWORD,
+                first_name="Admin",
+                last_name="Admin",
+                department="Admin",
+                role=Roles.Global_Admin,
             )
             self.stdout.write(
                 self.style.SUCCESS('Superuser created successfully')
