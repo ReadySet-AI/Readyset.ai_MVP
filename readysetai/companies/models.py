@@ -3,6 +3,7 @@ from enum import Enum
 from django.db import models
 
 from addons.mixins import TimeStampMixin
+from users.models import Roles
 
 
 class CompanyStatus(Enum):
@@ -22,13 +23,15 @@ class Company(TimeStampMixin, models.Model):
         choices=[(status.name, status.value) for status in CompanyStatus],
         default=CompanyStatus.PENDING.value,
     )
-    company_admin = models.OneToOneField(
+    company_admin = models.ForeignKey(
         'users.CustomUser',
         on_delete=models.PROTECT,
         null=True,
         blank=True,
         related_name='company_admin',
-        limit_choices_to={'role': 'Company_Admin'},
+        limit_choices_to={
+            'role__in': [Roles.Company_Admin.name, Roles.Mentor.name]
+        },
     )
 
     class Meta:
